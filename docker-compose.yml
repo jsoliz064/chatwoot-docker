@@ -1,0 +1,70 @@
+
+services:
+  postgres:
+    image: postgres:15
+    restart: always
+    container_name: chatwoot-postgres
+    # Los puertos fueron eliminados, acceso exclusivo vía red interna
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${POSTGRES_DATABASE}
+      - POSTGRES_USER=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    networks:
+      - chatwoot_network
+
+  redis:
+    image: redis:7-alpine
+    restart: always
+    container_name: chatwoot-redis
+    command: ["sh", "-c", "redis-server --requirepass \"$REDIS_PASSWORD\""]
+    # Los puertos fueron eliminados
+    volumes:
+      - redis_data:/data
+    networks:
+      - chatwoot_network
+
+  chatwoot-web:
+    image: chatwoot/chatwoot:latest
+    restart: always
+    container_name: chatwoot-web
+    env_file: .env
+    depends_on:
+      - postgres
+      - redis
+    # Sin puertos expuestos al host
+    volumes:
+      - chatwoot_data:/app/storage
+    command: ['bundle', 'exec', 'rails', 's', '-p', '3000', '-b', '0.0.0.0']
+    networks:
+      - chatwoot_network
+      - nginx_network # Conexión a la red externa de Nginx
+
+  chatwoot-worker:
+    image: chatwoot/chatwoot:latest
+    restart: always
+    container_name: chatwoot-worker
+    env_file: .env
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - chatwoot_data:/app/storage
+    command: ['bundle', 'exec', 'sidekiq', '-C', 'config/sidekiq.yml']
+    networks:
+      - chatwoot_network
+
+volumes:
+  postgres_data:
+  redis_data:
+  chatwoot_data:
+
+networks:
+  chatwoot_network:
+    # Red interna aislada para la base de datos, redis y los workers
+    driver: bridge
+  nginx_network:
+    # Red externa administrada por tu contenedor Nginx
+    external: true
+    name: nombre_de_tu_red_nginx # REEMPLAZA ESTO por el nombre real de tu red de Nginx
