@@ -1,7 +1,7 @@
 
 services:
   postgres:
-    image: postgres:15
+    image: pgvector/pgvector:pg15
     restart: always
     container_name: chatwoot-postgres
     # Los puertos fueron eliminados, acceso exclusivo vía red interna
