@@ -67,4 +67,4 @@ networks:
   nginx_network:
     # Red externa administrada por tu contenedor Nginx
     external: true
-    name: nombre_de_tu_red_nginx # REEMPLAZA ESTO por el nombre real de tu red de Nginx
+    name: ${NGINX_NETWORK_NAME} # REEMPLAZA EN EL .ENV por el nombre real de tu red de Nginx
