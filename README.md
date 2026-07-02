@@ -51,6 +51,11 @@ Copia este archivo localmente para referencia, pero **NUNCA** lo subas al reposi
 cp .env.example .env
 ```
 
+Genera la llave secreta en el vps:
+```bash
+openssl rand -hex 64
+```
+
 *Pega las variables configuradas con contraseñas seguras y la URL correcta de tu subdominio.*
 
 ---
