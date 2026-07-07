@@ -19,8 +19,7 @@ El despliegue levanta 4 servicios principales interconectados:
 
 Antes de clonar en producción, la estructura local del proyecto debe lucir así:
 
-
-```
+````
 
 ```text
 README.md creado exitosamente
@@ -32,7 +31,7 @@ chatwoot-docker/
 ├── .env.example (Plantilla de ejemplo)
 └── .gitignore
 
-```
+````
 
 ---
 
@@ -41,7 +40,6 @@ chatwoot-docker/
 ### 1. `docker-compose.yml`
 
 Modifica este archivo asegurándote de reemplazar `nombre_de_tu_red_nginx` al final del documento con el nombre real de tu red de Nginx actual.
-
 
 ### 2. `.env.example` (Plantilla de ejemplo)
 
@@ -52,32 +50,34 @@ cp .env.example .env
 ```
 
 Genera la llave secreta en el vps:
+
 ```bash
 openssl rand -hex 64
 ```
 
-*Pega las variables configuradas con contraseñas seguras y la URL correcta de tu subdominio.*
+_Pega las variables configuradas con contraseñas seguras y la URL correcta de tu subdominio._
 
 ---
 
 ## 🛠️ Flujo de Trabajo (Paso a Paso)
-
 
 ### Paso 1: Inicialización de la Base de Datos (Primer Arranque)
 
 Antes de levantar toda la aplicación, debes preparar y migrar el esquema de la base de datos de Chatwoot:
 
 1. Levanta únicamente los servicios de persistencia de datos:
+
 ```bash
 docker-compose up -d postgres redis
 ```
 
 2. Ejecuta el comando de inicialización de Rails dentro del contenedor web de forma temporal:
+
 ```bash
 docker-compose run --rm chatwoot-web bundle exec rake db:chatwoot_prepare
 ```
 
-*Espera a que finalice completamente sin errores.*
+_Espera a que finalice completamente sin errores._
 
 ### Paso 2: Encendido General del Servicio
 
@@ -130,7 +130,7 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-        
+
         # Habilitar soporte para WebSockets (Esencial para Chatwoot)
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "Upgrade";
@@ -143,18 +143,19 @@ server {
 
 ## 💾 Copias de Seguridad y Migración (Named Volumes)
 
-Como los datos se almacenan de forma segura en *Named Volumes* gestionados por Docker, puedes realizar respaldos o migraciones utilizando un contenedor ligero (`alpine`) sin lidiar con problemas de permisos del sistema de archivos del host.
+Como los datos se almacenan de forma segura en _Named Volumes_ gestionados por Docker, puedes realizar respaldos o migraciones utilizando un contenedor ligero (`alpine`) sin lidiar con problemas de permisos del sistema de archivos del host.
 
 ### Respaldar Datos (Servidor Viejo)
 
 1. Detén el stack completo para congelar la escritura de datos:
+
 ```bash
 docker-compose down
 
 ```
 
-
 2. Exporta los volúmenes críticos a archivos comprimidos `.tar`:
+
 ```bash
 # Respaldar base de datos PostgreSQL
 docker run --rm -v chatwoot_postgres_data:/datos -v $(pwd):/backup alpine tar -cvf /backup/postgres_data.tar -C /datos .
@@ -164,20 +165,20 @@ docker run --rm -v chatwoot_chatwoot_data:/datos -v $(pwd):/backup alpine tar -c
 
 ```
 
-
 3. Transfiere los archivos `postgres_data.tar`, `chatwoot_data.tar`, tu `.env` y el código del repositorio a tu nuevo servidor (usando `scp` o `rsync`).
 
 ### Restaurar Datos (Servidor Nuevo)
 
 1. Crea los volúmenes nombrados vacíos en el nuevo Docker del VPS:
+
 ```bash
 docker volume create chatwoot_postgres_data
 docker volume create chatwoot_chatwoot_data
 
 ```
 
-
 2. Restaura el contenido de los archivos `.tar` dentro de los nuevos volúmenes antes de arrancar los contenedores:
+
 ```bash
 # Restaurar PostgreSQL
 docker run --rm -v chatwoot_postgres_data:/datos -v $(pwd):/backup alpine tar -xvf /backup/postgres_data.tar -C /datos
@@ -187,5 +188,8 @@ docker run --rm -v chatwoot_chatwoot_data:/datos -v $(pwd):/backup alpine tar -x
 
 ```
 
-
 3. Ejecuta `docker-compose up -d` y el sistema continuará exactamente donde lo dejaste, conservando todos los historiales y configuraciones de la API de WhatsApp intactos.
+
+```bash
+docker-compose up -d
+```
