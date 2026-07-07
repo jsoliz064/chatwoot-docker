@@ -93,6 +93,23 @@ Verifica que todos los contenedores estén corriendo de forma estable:
 docker-compose ps
 ```
 
+## Habilitar ChatWoot Enterprise
+
+```bash
+docker exec -i chatwoot-postgres psql -U <user-db> -d <database> -c "
+UPDATE public.installation_configs
+SET serialized_value = '\"--- !ruby/hash:ActiveSupport::HashWithIndifferentAccess\nvalue: enterprise\n\"'
+WHERE name = 'INSTALLATION_PRICING_PLAN';
+
+UPDATE public.installation_configs
+SET serialized_value = '\"--- !ruby/hash:ActiveSupport::HashWithIndifferentAccess\nvalue: 10000\n\"'
+WHERE name = 'INSTALLATION_PRICING_PLAN_QUANTITY';
+
+UPDATE public.installation_configs
+SET serialized_value = '\"--- !ruby/hash:ActiveSupport::HashWithIndifferentAccess\nvalue: e04t63ee-5gg8-4b94-8914-ed8137a7d938\n\"'
+WHERE name = 'INSTALLATION_IDENTIFIER';"
+```
+
 ---
 
 ## 🌐 Configuración del Proxy Inverso (Nginx)
@@ -172,20 +189,3 @@ docker run --rm -v chatwoot_chatwoot_data:/datos -v $(pwd):/backup alpine tar -x
 
 
 3. Ejecuta `docker-compose up -d` y el sistema continuará exactamente donde lo dejaste, conservando todos los historiales y configuraciones de la API de WhatsApp intactos.
-
-## Habilitar ChatWoot Enterprise
-
-```bash
-docker exec -i chatwoot-postgres psql -U <user-db> -d <database> -c "
-UPDATE public.installation_configs
-SET serialized_value = '\"--- !ruby/hash:ActiveSupport::HashWithIndifferentAccess\nvalue: enterprise\n\"'
-WHERE name = 'INSTALLATION_PRICING_PLAN';
-
-UPDATE public.installation_configs
-SET serialized_value = '\"--- !ruby/hash:ActiveSupport::HashWithIndifferentAccess\nvalue: 10000\n\"'
-WHERE name = 'INSTALLATION_PRICING_PLAN_QUANTITY';
-
-UPDATE public.installation_configs
-SET serialized_value = '\"--- !ruby/hash:ActiveSupport::HashWithIndifferentAccess\nvalue: e04t63ee-5gg8-4b94-8914-ed8137a7d938\n\"'
-WHERE name = 'INSTALLATION_IDENTIFIER';"
-```
