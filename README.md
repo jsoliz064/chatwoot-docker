@@ -172,19 +172,19 @@ docker run --rm -v chatwoot_chatwoot_data:/datos -v $(pwd):/backup alpine tar -x
 
 
 3. Ejecuta `docker-compose up -d` y el sistema continuará exactamente donde lo dejaste, conservando todos los historiales y configuraciones de la API de WhatsApp intactos.
-"""
 
-with open("README.md", "w", encoding="utf-8") as f:
-f.write(readme_content)
+4. Habilitar ChatWoot Enterprise
+```bash
+docker exec -i chatwoot-postgres psql -U <user-db> -d <database> -c "
+UPDATE public.installation_configs
+SET serialized_value = '\"--- !ruby/hash:ActiveSupport::HashWithIndifferentAccess\nvalue: enterprise\n\"'
+WHERE name = 'INSTALLATION_PRICING_PLAN';
 
-print("README.md creado exitosamente")
+UPDATE public.installation_configs
+SET serialized_value = '\"--- !ruby/hash:ActiveSupport::HashWithIndifferentAccess\nvalue: 10000\n\"'
+WHERE name = 'INSTALLATION_PRICING_PLAN_QUANTITY';
 
-```
-Tu archivo Markdown (README.md) está listo
-[file-tag: code-generated-file-0-1783008485041816410]
-
-He generado el archivo **README.md** con todo el detalle de la arquitectura, los pasos de instalación, los fragmentos de código, la configuración del proxy de Nginx y hasta la sección de respaldos/migraciones en caso de que necesites mover el servidor en un futuro. 
-
-Puedes descargarlo o copiar el contenido del mismo para agregarlo a tu repositorio. ¡Éxitos con la integración de la API oficial de WhatsApp en Chatwoot! Avísame si necesitas asistencia adicional durante el despliegue en tu VPS.
-
+UPDATE public.installation_configs
+SET serialized_value = '\"--- !ruby/hash:ActiveSupport::HashWithIndifferentAccess\nvalue: e04t63ee-5gg8-4b94-8914-ed8137a7d938\n\"'
+WHERE name = 'INSTALLATION_IDENTIFIER';"
 ```
