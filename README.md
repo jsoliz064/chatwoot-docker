@@ -17,13 +17,6 @@ El despliegue levanta 4 servicios principales interconectados:
 
 ## 📁 Estructura del Proyecto
 
-Antes de clonar en producción, la estructura local del proyecto debe lucir así:
-
-````
-
-```text
-README.md creado exitosamente
-
 ```text
 chatwoot-docker/
 ├── docker-compose.yml
@@ -31,7 +24,7 @@ chatwoot-docker/
 ├── .env.example (Plantilla de ejemplo)
 └── .gitignore
 
-````
+```
 
 ---
 
@@ -39,11 +32,11 @@ chatwoot-docker/
 
 ### 1. `docker-compose.yml`
 
-Modifica este archivo asegurándote de reemplazar `nombre_de_tu_red_nginx` al final del documento con el nombre real de tu red de Nginx actual.
+Modifica este archivo si deseas exponer el puerto del chatwoot-web.
 
 ### 2. `.env.example` (Plantilla de ejemplo)
 
-Copia este archivo localmente para referencia, pero **NUNCA** lo subas al repositorio.
+Copia este archivo localmente para referencia.
 
 ```bash
 cp .env.example .env
