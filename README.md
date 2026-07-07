@@ -173,7 +173,8 @@ docker run --rm -v chatwoot_chatwoot_data:/datos -v $(pwd):/backup alpine tar -x
 
 3. Ejecuta `docker-compose up -d` y el sistema continuará exactamente donde lo dejaste, conservando todos los historiales y configuraciones de la API de WhatsApp intactos.
 
-4. Habilitar ChatWoot Enterprise
+## Habilitar ChatWoot Enterprise
+
 ```bash
 docker exec -i chatwoot-postgres psql -U <user-db> -d <database> -c "
 UPDATE public.installation_configs
