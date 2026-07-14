@@ -21,6 +21,7 @@ services:
       - redis_data:/data
     networks:
       - chatwoot_network
+      - nginx_network
 
   chatwoot-web:
     image: chatwoot/chatwoot:latest
